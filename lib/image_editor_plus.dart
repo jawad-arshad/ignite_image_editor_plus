@@ -135,7 +135,7 @@ class MultiImageEditor extends StatefulWidget {
 
 class _MultiImageEditorState extends State<MultiImageEditor> {
   List<ImageItem> images = [];
-
+  bool loader = false;
   @override
   void initState() {
     images = widget.images.map((e) => ImageItem(e)).toList();
@@ -181,121 +181,136 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               icon: const Icon(Icons.check),
               onPressed: () async {
+                setState(() {
+                  loader = true;
+                });
                 Navigator.pop(context, images);
+                setState(() {
+                  loader = false;
+                });
               },
             ),
           ],
         ),
-        body: Column(
-          children: [
-            SizedBox(
-              height: 332,
-              width: double.infinity,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    const SizedBox(width: 32),
-                    for (var image in images)
-                      Stack(children: [
-                        GestureDetector(
-                          onTap: () async {
-                            var img = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SingleImageEditor(
-                                  image: image,
-                                ),
-                              ),
-                            );
+        body: loader
+            ? const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  )
+                ],
+              )
+            : Column(
+                children: [
+                  SizedBox(
+                    height: 332,
+                    width: double.infinity,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 32),
+                          for (var image in images)
+                            Stack(children: [
+                              GestureDetector(
+                                onTap: () async {
+                                  var img = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SingleImageEditor(
+                                        image: image,
+                                      ),
+                                    ),
+                                  );
 
-                            if (img != null) {
-                              image.load(img);
-                              setState(() {});
-                            }
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 32, right: 32, bottom: 32),
-                            width: 200,
-                            height: 300,
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              border: Border.all(color: Colors.white.withAlpha(80)),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: Image.memory(
-                                image.image,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 36,
-                          right: 36,
-                          child: Container(
-                            height: 32,
-                            width: 32,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(60),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: IconButton(
-                              iconSize: 20,
-                              padding: const EdgeInsets.all(0),
-                              onPressed: () {
-                                // print('removing');
-                                images.remove(image);
-                                setState(() {});
-                              },
-                              icon: const Icon(Icons.clear_outlined),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 32,
-                          left: 0,
-                          child: Container(
-                            height: 38,
-                            width: 38,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(100),
-                              borderRadius: const BorderRadius.only(
-                                topRight: Radius.circular(19),
-                              ),
-                            ),
-                            child: IconButton(
-                              iconSize: 20,
-                              padding: const EdgeInsets.all(0),
-                              onPressed: () async {
-                                Uint8List? editedImage = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ImageFilters(
-                                      image: image.image,
+                                  if (img != null) {
+                                    image.load(img);
+                                    setState(() {});
+                                  }
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: 32, right: 32, bottom: 32),
+                                  width: 200,
+                                  height: 300,
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    border: Border.all(color: Colors.white.withAlpha(80)),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: Image.memory(
+                                      image.image,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                );
+                                ),
+                              ),
+                              Positioned(
+                                top: 36,
+                                right: 36,
+                                child: Container(
+                                  height: 32,
+                                  width: 32,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withAlpha(60),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: IconButton(
+                                    iconSize: 20,
+                                    padding: const EdgeInsets.all(0),
+                                    onPressed: () {
+                                      // print('removing');
+                                      images.remove(image);
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(Icons.clear_outlined),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 32,
+                                left: 0,
+                                child: Container(
+                                  height: 38,
+                                  width: 38,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withAlpha(100),
+                                    borderRadius: const BorderRadius.only(
+                                      topRight: Radius.circular(19),
+                                    ),
+                                  ),
+                                  child: IconButton(
+                                    iconSize: 20,
+                                    padding: const EdgeInsets.all(0),
+                                    onPressed: () async {
+                                      Uint8List? editedImage = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ImageFilters(
+                                            image: image.image,
+                                          ),
+                                        ),
+                                      );
 
-                                if (editedImage != null) {
-                                  image.load(editedImage);
-                                }
-                              },
-                              icon: const Icon(Icons.photo_filter_sharp),
-                            ),
-                          ),
-                        ),
-                      ]),
-                  ],
-                ),
+                                      if (editedImage != null) {
+                                        image.load(editedImage);
+                                      }
+                                    },
+                                    icon: const Icon(Icons.photo_filter_sharp),
+                                  ),
+                                ),
+                              ),
+                            ]),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -339,6 +354,8 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
     layers.clear();
     super.dispose();
   }
+
+  bool loader = false;
 
   List<Widget> get filterActions {
     return [
@@ -400,10 +417,15 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         icon: const Icon(Icons.check),
         onPressed: () async {
+          setState(() {
+            loader = true;
+          });
           resetTransformation();
 
           var binaryIntList = await screenshotController.capture(pixelRatio: pixelRatio);
-
+          setState(() {
+            loader = false;
+          });
           Navigator.pop(context, binaryIntList);
         },
       ),
@@ -514,65 +536,74 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           automaticallyImplyLeading: false,
           actions: filterActions,
         ),
-        body: GestureDetector(
-          onScaleUpdate: (details) {
-            // print(details);
+        body: loader
+            ? const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  )
+                ],
+              )
+            : GestureDetector(
+                onScaleUpdate: (details) {
+                  // print(details);
 
-            // move
-            if (details.pointerCount == 1) {
-              // print(details.focalPointDelta);
-              x += details.focalPointDelta.dx;
-              y += details.focalPointDelta.dy;
-              setState(() {});
-            }
+                  // move
+                  if (details.pointerCount == 1) {
+                    // print(details.focalPointDelta);
+                    x += details.focalPointDelta.dx;
+                    y += details.focalPointDelta.dy;
+                    setState(() {});
+                  }
 
-            // scale
-            if (details.pointerCount == 2) {
-              // print([details.horizontalScale, details.verticalScale]);
-              if (details.horizontalScale != 1) {
-                scaleFactor = lastScaleFactor * math.min(details.horizontalScale, details.verticalScale);
-                setState(() {});
-              }
-            }
-          },
-          onScaleEnd: (details) {
-            lastScaleFactor = scaleFactor;
-          },
-          child: Center(
-            child: SizedBox(
-              height: currentImage.height / pixelRatio,
-              width: currentImage.width / pixelRatio,
-              child: Screenshot(
-                controller: screenshotController,
-                child: RotatedBox(
-                  quarterTurns: rotateValue,
-                  child: Transform(
-                    transform: Matrix4(
-                      1,
-                      0,
-                      0,
-                      0,
-                      0,
-                      1,
-                      0,
-                      0,
-                      0,
-                      0,
-                      1,
-                      0,
-                      x,
-                      y,
-                      0,
-                      1 / scaleFactor,
-                    )..rotateY(flipValue),
-                    alignment: FractionalOffset.center,
-                    child: layersStack,
+                  // scale
+                  if (details.pointerCount == 2) {
+                    // print([details.horizontalScale, details.verticalScale]);
+                    if (details.horizontalScale != 1) {
+                      scaleFactor = lastScaleFactor * math.min(details.horizontalScale, details.verticalScale);
+                      setState(() {});
+                    }
+                  }
+                },
+                onScaleEnd: (details) {
+                  lastScaleFactor = scaleFactor;
+                },
+                child: Center(
+                  child: SizedBox(
+                    height: currentImage.height / pixelRatio,
+                    width: currentImage.width / pixelRatio,
+                    child: Screenshot(
+                      controller: screenshotController,
+                      child: RotatedBox(
+                        quarterTurns: rotateValue,
+                        child: Transform(
+                          transform: Matrix4(
+                            1,
+                            0,
+                            0,
+                            0,
+                            0,
+                            1,
+                            0,
+                            0,
+                            0,
+                            0,
+                            1,
+                            0,
+                            x,
+                            y,
+                            0,
+                            1 / scaleFactor,
+                          )..rotateY(flipValue),
+                          alignment: FractionalOffset.center,
+                          child: layersStack,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ),
         bottomNavigationBar: Container(
           // color: Colors.black45,
           alignment: Alignment.bottomCenter,
