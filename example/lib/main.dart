@@ -12,8 +12,8 @@ void main() {
 
 class ImageEditorExample extends StatefulWidget {
   const ImageEditorExample({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   createState() => _ImageEditorExampleState();
@@ -75,6 +75,9 @@ class _ImageEditorExampleState extends State<ImageEditorExample> {
                       imageData,
                       imageData,
                     ],
+                    allowMultiple: true,
+                    allowCamera: true,
+                    allowGallery: true,
                   ),
                 ),
               );

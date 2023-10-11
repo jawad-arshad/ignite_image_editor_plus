@@ -14,9 +14,6 @@ class ImageUtils {
     image, {
     String format = 'jpeg',
     int quality = 80,
-    int? height,
-    int? width,
-    bool preserveExif = true,
   }) async {
     if (!_formatMap.containsKey(format)) {
       throw Exception('Output format not supported by library.');
@@ -27,9 +24,7 @@ class ImageUtils {
         image,
         quality: quality,
         format: _formatMap[format]!,
-        minHeight: height ?? 1080,
-        minWidth: width ?? 1920,
-        keepExif: preserveExif,
+        keepExif: true,
       );
 
       return output;
@@ -38,9 +33,7 @@ class ImageUtils {
         image,
         quality: quality,
         format: _formatMap[format]!,
-        minHeight: height ?? 1080,
-        minWidth: width ?? 1920,
-        keepExif: preserveExif,
+        keepExif: true,
       );
 
       if (output == null) {

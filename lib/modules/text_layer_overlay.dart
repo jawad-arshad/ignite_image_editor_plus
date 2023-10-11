@@ -9,11 +9,11 @@ class TextLayerOverlay extends StatefulWidget {
   final Function onUpdate;
 
   const TextLayerOverlay({
-    super.key,
+    Key? key,
     required this.layer,
     required this.index,
     required this.onUpdate,
-  });
+  }) : super(key: key);
 
   @override
   createState() => _TextLayerOverlayState();
@@ -36,9 +36,7 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
       decoration: const BoxDecoration(
         color: Colors.black87,
         borderRadius: BorderRadius.only(
-          topRight: Radius.circular(10),
-          topLeft: Radius.circular(10),
-        ),
+            topRight: Radius.circular(10), topLeft: Radius.circular(10)),
       ),
       child: Column(
         children: [
@@ -49,6 +47,27 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
               style: const TextStyle(color: Colors.white),
             ),
           ),
+          const Divider(),
+          Slider(
+              activeColor: Colors.white,
+              inactiveColor: Colors.grey,
+              value: widget.layer.size,
+              min: 0.0,
+              max: 100.0,
+              onChangeEnd: (v) {
+                setState(() {
+                  widget.layer.size = v.toDouble();
+                  widget.onUpdate();
+                });
+              },
+              onChanged: (v) {
+                setState(() {
+                  slider = v;
+                  // print(v.toDouble());
+                  widget.layer.size = v.toDouble();
+                  widget.onUpdate();
+                });
+              }),
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
@@ -56,51 +75,6 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
             ),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
-                padding: const EdgeInsets.only(left: 16),
-                child: Text(
-                  i18n('Size'),
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-              Row(children: [
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Slider(
-                    thumbColor: Colors.white,
-                    value: widget.layer.size,
-                    min: 0.0,
-                    max: 100.0,
-                    onChangeEnd: (v) {
-                      setState(() {
-                        widget.layer.size = v.toDouble();
-                        widget.onUpdate();
-                      });
-                    },
-                    onChanged: (v) {
-                      setState(() {
-                        slider = v;
-                        // print(v.toDouble());
-                        widget.layer.size = v.toDouble();
-                        widget.onUpdate();
-                      });
-                    },
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      widget.layer.backgroundOpacity = 0;
-                      widget.onUpdate();
-                    });
-                  },
-                  child: Text(
-                    i18n('Reset'),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-                const SizedBox(width: 16),
-              ]),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.only(left: 16),
@@ -110,7 +84,7 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                 ),
               ),
               Row(children: [
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
                 Expanded(
                   child: BarColorPicker(
                     width: 300,
@@ -147,7 +121,7 @@ class _TextLayerOverlayState extends State<TextLayerOverlay> {
                 ),
               ),
               Row(children: [
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
                 Expanded(
                   child: BarColorPicker(
                     width: 300,

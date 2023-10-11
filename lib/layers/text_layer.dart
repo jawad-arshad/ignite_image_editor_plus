@@ -9,10 +9,10 @@ class TextLayer extends StatefulWidget {
   final VoidCallback? onUpdate;
 
   const TextLayer({
-    super.key,
+    Key? key,
     required this.layerData,
     this.onUpdate,
-  });
+  }) : super(key: key);
   @override
   createState() => _TextViewState();
 }
@@ -39,7 +39,6 @@ class _TextViewState extends State<TextLayer> {
               ),
             ),
             context: context,
-            backgroundColor: Colors.transparent,
             builder: (context) {
               return TextLayerOverlay(
                 index: layers.indexOf(widget.layerData),
