@@ -22,7 +22,6 @@ import 'package:image_editor_plus/layers/image_layer.dart';
 import 'package:image_editor_plus/layers/text_layer.dart';
 import 'package:image_editor_plus/modules/all_emojies.dart';
 import 'package:image_editor_plus/modules/text.dart';
-import 'package:image_editor_plus/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -44,10 +43,8 @@ class ImageEditor extends StatelessWidget {
   final Directory? savePath;
   final int maxLength;
   final bool allowGallery, allowCamera, allowMultiple;
-  List multipleImages = [];
-  Uint8List? singleImage;
 
-  ImageEditor(
+  const ImageEditor(
       {Key? key,
       this.image,
       this.images,
@@ -59,29 +56,15 @@ class ImageEditor extends StatelessWidget {
       Color? appBar})
       : super(key: key);
 
-  compressMultipleImages() async {
-    multipleImages = await ImageUtils.convertAll(images ?? []);
-  }
-
-  compressSingleImage() async {
-    singleImage = await ImageUtils.convert(image);
-  }
-
   @override
   Widget build(BuildContext context) {
-    // if (images != null && image == null && !allowCamera && !allowGallery) {
-    //   throw Exception(
-    //       'No image to work with, provide an image or allow the image picker.');
-    // }
-    if (images != null) {
-      compressMultipleImages();
-    } else {
-      compressSingleImage();
+    if (images != null && image == null && !allowCamera && !allowGallery) {
+      throw Exception('No image to work with, provide an image or allow the image picker.');
     }
 
     if ((image == null || images != null) && allowMultiple == true) {
       return MultiImageEditor(
-        images: multipleImages,
+        images: images ?? [],
         savePath: savePath,
         allowCamera: allowCamera,
         allowGallery: allowGallery,
@@ -90,7 +73,7 @@ class ImageEditor extends StatelessWidget {
       );
     } else {
       return SingleImageEditor(
-        image: singleImage,
+        image: image,
         savePath: savePath,
         allowCamera: allowCamera,
         allowGallery: allowGallery,
