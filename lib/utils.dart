@@ -13,7 +13,7 @@ class ImageUtils {
   static Future<Uint8List> convert(
     image, {
     String format = 'jpeg',
-    int quality = 50,
+    int quality = 30,
   }) async {
     if (!_formatMap.containsKey(format)) {
       throw Exception('Output format not supported by library.');
@@ -49,7 +49,7 @@ class ImageUtils {
   static Future<List<Uint8List>> convertAll(
     List images, {
     String format = 'jpeg',
-    int quality = 50,
+    int quality = 30,
   }) async {
     List<Uint8List> outputs = [];
     if (images.isNotEmpty) {
