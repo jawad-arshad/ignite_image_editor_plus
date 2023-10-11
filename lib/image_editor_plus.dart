@@ -58,9 +58,9 @@ class ImageEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (images != null && image == null && !allowCamera && !allowGallery) {
-      throw Exception('No image to work with, provide an image or allow the image picker.');
-    }
+    // if (images != null && image == null && !allowCamera && !allowGallery) {
+    //   throw Exception('No image to work with, provide an image or allow the image picker.');
+    // }
 
     if ((image == null || images != null) && allowMultiple == true) {
       return MultiImageEditor(
@@ -185,132 +185,120 @@ class _MultiImageEditorState extends State<MultiImageEditor> {
                   loader = true;
                 });
                 Navigator.pop(context, images);
-                setState(() {
-                  loader = false;
-                });
               },
             ),
           ],
         ),
-        body: loader
-            ? const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  )
-                ],
-              )
-            : Column(
-                children: [
-                  SizedBox(
-                    height: 332,
-                    width: double.infinity,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 32),
-                          for (var image in images)
-                            Stack(children: [
-                              GestureDetector(
-                                onTap: () async {
-                                  var img = await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SingleImageEditor(
-                                        image: image,
-                                      ),
-                                    ),
-                                  );
+        body: Column(
+          children: [
+            SizedBox(
+              height: 332,
+              width: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 32),
+                    for (var image in images)
+                      Stack(children: [
+                        GestureDetector(
+                          onTap: () async {
+                            var img = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SingleImageEditor(
+                                  image: image,
+                                ),
+                              ),
+                            );
 
-                                  if (img != null) {
-                                    image.load(img);
-                                    setState(() {});
-                                  }
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 32, right: 32, bottom: 32),
-                                  width: 200,
-                                  height: 300,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    border: Border.all(color: Colors.white.withAlpha(80)),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(4),
-                                    child: Image.memory(
-                                      image.image,
-                                      fit: BoxFit.cover,
+                            if (img != null) {
+                              image.load(img);
+                              setState(() {});
+                            }
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 32, right: 32, bottom: 32),
+                            width: 200,
+                            height: 300,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              border: Border.all(color: Colors.white.withAlpha(80)),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.memory(
+                                image.image,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 36,
+                          right: 36,
+                          child: Container(
+                            height: 32,
+                            width: 32,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withAlpha(60),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: IconButton(
+                              iconSize: 20,
+                              padding: const EdgeInsets.all(0),
+                              onPressed: () {
+                                // print('removing');
+                                images.remove(image);
+                                setState(() {});
+                              },
+                              icon: const Icon(Icons.clear_outlined),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 32,
+                          left: 0,
+                          child: Container(
+                            height: 38,
+                            width: 38,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withAlpha(100),
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(19),
+                              ),
+                            ),
+                            child: IconButton(
+                              iconSize: 20,
+                              padding: const EdgeInsets.all(0),
+                              onPressed: () async {
+                                Uint8List? editedImage = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ImageFilters(
+                                      image: image.image,
                                     ),
                                   ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 36,
-                                right: 36,
-                                child: Container(
-                                  height: 32,
-                                  width: 32,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withAlpha(60),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: IconButton(
-                                    iconSize: 20,
-                                    padding: const EdgeInsets.all(0),
-                                    onPressed: () {
-                                      // print('removing');
-                                      images.remove(image);
-                                      setState(() {});
-                                    },
-                                    icon: const Icon(Icons.clear_outlined),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 32,
-                                left: 0,
-                                child: Container(
-                                  height: 38,
-                                  width: 38,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withAlpha(100),
-                                    borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(19),
-                                    ),
-                                  ),
-                                  child: IconButton(
-                                    iconSize: 20,
-                                    padding: const EdgeInsets.all(0),
-                                    onPressed: () async {
-                                      Uint8List? editedImage = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ImageFilters(
-                                            image: image.image,
-                                          ),
-                                        ),
-                                      );
+                                );
 
-                                      if (editedImage != null) {
-                                        image.load(editedImage);
-                                      }
-                                    },
-                                    icon: const Icon(Icons.photo_filter_sharp),
-                                  ),
-                                ),
-                              ),
-                            ]),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                                if (editedImage != null) {
+                                  image.load(editedImage);
+                                }
+                              },
+                              icon: const Icon(Icons.photo_filter_sharp),
+                            ),
+                          ),
+                        ),
+                      ]),
+                  ],
+                ),
               ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -423,9 +411,6 @@ class _SingleImageEditorState extends State<SingleImageEditor> {
           resetTransformation();
 
           var binaryIntList = await screenshotController.capture(pixelRatio: pixelRatio);
-          setState(() {
-            loader = false;
-          });
           Navigator.pop(context, binaryIntList);
         },
       ),
