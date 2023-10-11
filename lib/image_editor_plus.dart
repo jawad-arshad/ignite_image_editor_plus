@@ -44,8 +44,10 @@ class ImageEditor extends StatelessWidget {
   final Directory? savePath;
   final int maxLength;
   final bool allowGallery, allowCamera, allowMultiple;
+  List multipleImages = [];
+  Uint8List? singleImage;
 
-  const ImageEditor(
+  ImageEditor(
       {Key? key,
       this.image,
       this.images,
@@ -58,15 +60,11 @@ class ImageEditor extends StatelessWidget {
       : super(key: key);
 
   compressMultipleImages() async {
-    List multipleImages = [];
     multipleImages = await ImageUtils.convertAll(images ?? []);
-    return multipleImages;
   }
 
   compressSingleImage() async {
-    Uint8List singleImage;
     singleImage = await ImageUtils.convert(image);
-    return singleImage;
   }
 
   @override
@@ -75,10 +73,15 @@ class ImageEditor extends StatelessWidget {
     //   throw Exception(
     //       'No image to work with, provide an image or allow the image picker.');
     // }
+    if (images != null) {
+      compressMultipleImages();
+    } else {
+      compressSingleImage();
+    }
 
     if ((image == null || images != null) && allowMultiple == true) {
       return MultiImageEditor(
-        images: compressMultipleImages(),
+        images: multipleImages,
         savePath: savePath,
         allowCamera: allowCamera,
         allowGallery: allowGallery,
@@ -87,7 +90,7 @@ class ImageEditor extends StatelessWidget {
       );
     } else {
       return SingleImageEditor(
-        image: compressSingleImage(),
+        image: singleImage,
         savePath: savePath,
         allowCamera: allowCamera,
         allowGallery: allowGallery,
